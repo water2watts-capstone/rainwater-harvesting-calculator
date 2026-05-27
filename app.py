@@ -7,8 +7,8 @@ st.set_page_config(page_title="Rainwater Harvesting Calculator", layout="wide")
 # TITLE
 # =====================================================================
 
-st.title("🌧️ Rainwater Harvesting Calculator (Excel‑Equivalent)")
-st.write("Enter your building parameters below. Rainfall values use Seattle climatology.")
+st.title("🌧️ Rainwater Harvesting Calculator")
+st.write("Enter your building parameters below. Rainfall values are based on 11-year "daily averages" for Seattle precipitation (NOAA).")
 
 st.divider()
 
