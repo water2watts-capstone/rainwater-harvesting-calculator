@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-st.set_page_config(page_title="Simple Rainwater Harvesting Calculator", layout="wide")
+st.set_page_config(page_title="Rainwater Harvesting Calculator", layout="wide")
 
 # =====================================================================
 # 📋 Attribution & Disclaimer
@@ -25,7 +25,7 @@ with st.expander("📋 Attribution & Disclaimer"):
 # =====================================================================
 
 st.title("🌧️ Rainwater Harvesting Calculator (Excel-Equivalent Version)")
-st.write("This version reproduces the exact math used in the Excel model.")
+st.write("Enter your building parameters below. Rainfall values are based on Seattle climatology.")
 
 st.divider()
 
@@ -49,7 +49,7 @@ else:
     roof_area_ft2 = st.sidebar.number_input(
         "Custom roof area (sq ft):",
         min_value=100,
-        max_value=100000,
+        max_value=200000,
         value=10000
     )
 
@@ -136,4 +136,4 @@ st.subheader("📊 Annual Totals (Excel‑equivalent)")
 st.metric("Annual kWh", f"{monthly['energy_kwh'].sum():.2f}")
 st.metric("Annual Carbon Offset (kg)", f"{monthly['carbon_kg'].sum():.2f}")
 
-st.write("This version reproduces the exact Excel math using your processed monthly totals.")
+st.write("This version reproduces the exact Excel math using Seattle's monthly rainfall totals.")
