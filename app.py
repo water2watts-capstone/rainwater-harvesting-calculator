@@ -30,10 +30,10 @@ st.write("This version reproduces the exact math used in the Excel model.")
 st.divider()
 
 # =====================================================================
-# LOAD PROCESSED DATA (Excel’s monthly totals)
+# LOAD PROCESSED DATA (Excel’s monthly rainfall totals)
 # =====================================================================
 
-monthly = pd.read_csv("monthly_totals.csv")
+monthly = pd.read_csv("monthly_totals.csv")   # must contain: month, rainfall_m
 
 # =====================================================================
 # SIDEBAR INPUTS WITH PRESETS
@@ -121,4 +121,4 @@ st.subheader("📊 Annual Totals (Excel-equivalent)")
 st.metric("Annual kWh", f"{monthly['energy_kwh'].sum():.2f}")
 st.metric("Annual Carbon Offset (kg)", f"{monthly['carbon_kg'].sum():.2f}")
 
-st.write("This version reproduces the exact Excel math using our processed NOAA precipitatio data.")
+st.write("This version reproduces the exact Excel math using your processed monthly totals.")
