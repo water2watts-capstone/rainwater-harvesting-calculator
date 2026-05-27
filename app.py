@@ -30,12 +30,6 @@ st.write("This version reproduces the exact math used in the Excel model.")
 st.divider()
 
 # =====================================================================
-# LOAD PROCESSED DATA (Excel’s monthly rainfall totals)
-# =====================================================================
-
-monthly = pd.read_csv("monthly_totals.csv")   # must contain: month, rainfall_m
-
-# =====================================================================
 # SIDEBAR INPUTS WITH PRESETS
 # =====================================================================
 
@@ -89,27 +83,48 @@ capture_eff = 0.7   # Excel constant
 turbine_eff = 0.5   # Excel constant
 carbon_intensity = 0.031104  # kg CO2e per kWh (Excel constant)
 
-# =====================================================================
-# COMPUTATIONS (Excel-equivalent)
-# =====================================================================
-
 roof_area_m2 = roof_area_ft2 * ft2_to_m2
 head_m = head_ft * ft_to_m
 
-# Excel rainfall_m is already in meters
+# =====================================================================
+# 📌 HARD‑CODED EXCEL MONTHLY RAINFALL TOTALS (meters)
+# =====================================================================
+
+monthly = pd.DataFrame({
+    "month": [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ],
+    "rainfall_m": [
+        0.135,  # January
+        0.103,  # February
+        0.092,  # March
+        0.069,  # April
+        0.044,  # May
+        0.034,  # June
+        0.018,  # July
+        0.024,  # August
+        0.056,  # September
+        0.120,  # October
+        0.158,  # November
+        0.133   # December
+    ]
+})
+
+# =====================================================================
+# 📌 Excel‑equivalent calculations
+# =====================================================================
+
 monthly["volume_m3"] = monthly["rainfall_m"] * roof_area_m2 * capture_eff
 
-# Excel energy formula:
-#   E = (ρ * g * h * V * η) / 3.6e6
 monthly["energy_kwh"] = (
     rho * g * head_m * monthly["volume_m3"] * turbine_eff
 ) / 3.6e6
 
-# Excel carbon formula:
 monthly["carbon_kg"] = monthly["energy_kwh"] * carbon_intensity
 
 # =====================================================================
-# DISPLAY RESULTS
+# 📌 Display results
 # =====================================================================
 
 st.subheader("📅 Monthly Results")
@@ -117,7 +132,7 @@ st.dataframe(monthly, use_container_width=True)
 
 st.divider()
 
-st.subheader("📊 Annual Totals (Excel-equivalent)")
+st.subheader("📊 Annual Totals (Excel‑equivalent)")
 st.metric("Annual kWh", f"{monthly['energy_kwh'].sum():.2f}")
 st.metric("Annual Carbon Offset (kg)", f"{monthly['carbon_kg'].sum():.2f}")
 
