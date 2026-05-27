@@ -4,90 +4,81 @@ import pandas as pd
 st.set_page_config(page_title="Rainwater Harvesting Calculator", layout="wide")
 
 # =====================================================================
-# 📋 Attribution & Disclaimer
+# TITLE
 # =====================================================================
 
-with st.expander("📋 Attribution & Disclaimer"):
-    st.write("""
-    **Data & Calculations:**  
-    Based on the Water2Watts shared Excel file and climatology work by  
-    Peyton G., Kyle R., and Willa C.
-
-    **App Development:**  
-    - Concept: Kyle R.  
-    - Python adaptation: Paulinne A.  
-    - AI assistance: Microsoft Copilot + Claude Haiku  
-    - All AI-generated code reviewed and adapted by Paulinne A.
-    """)
-
-# =====================================================================
-# TITLE & INTRO
-# =====================================================================
-
-st.title("🌧️ Rainwater Harvesting Calculator (Excel-Equivalent Version)")
-st.write("Enter your building parameters below. Rainfall values are based on Seattle climatology.")
+st.title("🌧️ Rainwater Harvesting Calculator (Excel‑Equivalent)")
+st.write("Enter your building parameters below. Rainfall values use Seattle climatology.")
 
 st.divider()
 
 # =====================================================================
-# SIDEBAR INPUTS WITH PRESETS
+# MAIN‑BODY BUILDING INPUTS (NOT SIDEBAR)
 # =====================================================================
 
-st.sidebar.header("⚙️ Building Parameters")
+st.subheader("🏢 Building Parameters")
 
-# --- Roof area presets ---
-roof_preset = st.sidebar.selectbox(
-    "Choose roof area preset:",
-    ["Custom", "Alder Hall (10,650 ft²)", "IEB (12,846 ft²)"]
-)
+col1, col2 = st.columns(2)
 
+with col1:
+    roof_preset = st.selectbox(
+        "Roof Area Preset:",
+        ["Custom", "Alder Hall (10,650 ft²)", "IEB (12,846 ft²)"]
+    )
+
+with col2:
+    head_preset = st.selectbox(
+        "Head Height Preset:",
+        ["Custom", "23.1 ft (default pipe height)", "183 ft (IEB full height)"]
+    )
+
+# --- Roof area logic ---
 if roof_preset == "Alder Hall (10,650 ft²)":
     roof_area_ft2 = 10650
 elif roof_preset == "IEB (12,846 ft²)":
     roof_area_ft2 = 12846
 else:
-    roof_area_ft2 = st.sidebar.number_input(
-        "Custom roof area (sq ft):",
+    roof_area_ft2 = st.slider(
+        "Custom Roof Area (sq ft):",
         min_value=100,
         max_value=200000,
-        value=10000
+        value=10000,
+        step=50
     )
 
-# --- Head height presets ---
-head_preset = st.sidebar.selectbox(
-    "Choose head height:",
-    ["23.1 ft (default pipe height)", "183 ft (IEB full height)", "Custom"]
-)
-
+# --- Head height logic ---
 if head_preset == "23.1 ft (default pipe height)":
     head_ft = 23.1
 elif head_preset == "183 ft (IEB full height)":
     head_ft = 183.0
 else:
-    head_ft = st.sidebar.number_input(
-        "Custom head height (ft):",
+    head_ft = st.slider(
+        "Custom Head Height (ft):",
         min_value=1.0,
         max_value=300.0,
-        value=23.1
+        value=23.1,
+        step=0.1
     )
 
+st.divider()
+
 # =====================================================================
-# CONSTANTS (Excel-equivalent)
+# CONSTANTS
 # =====================================================================
 
 ft2_to_m2 = 0.09290304
 ft_to_m = 0.3048
-rho = 1000          # kg/m³
-g = 9.81            # m/s²
-capture_eff = 0.7   # Excel constant
-turbine_eff = 0.5   # Excel constant
-carbon_intensity = 0.031104  # kg CO2e per kWh (Excel constant)
+rho = 1000
+g = 9.81
+capture_eff = 0.7
+turbine_eff = 0.5
+carbon_intensity = 0.031104
 
 roof_area_m2 = roof_area_ft2 * ft2_to_m2
 head_m = head_ft * ft_to_m
 
 # =====================================================================
-# 📌 HARD‑CODED EXCEL MONTHLY RAINFALL TOTALS (meters)
+# MONTHLY RAINFALL (HARD‑CODED)
 # =====================================================================
 
 monthly = pd.DataFrame({
@@ -96,23 +87,13 @@ monthly = pd.DataFrame({
         "July", "August", "September", "October", "November", "December"
     ],
     "rainfall_m": [
-        0.135,  # January
-        0.103,  # February
-        0.092,  # March
-        0.069,  # April
-        0.044,  # May
-        0.034,  # June
-        0.018,  # July
-        0.024,  # August
-        0.056,  # September
-        0.120,  # October
-        0.158,  # November
-        0.133   # December
+        0.135, 0.103, 0.092, 0.069, 0.044, 0.034,
+        0.018, 0.024, 0.056, 0.120, 0.158, 0.133
     ]
 })
 
 # =====================================================================
-# 📌 Excel‑equivalent calculations
+# CALCULATIONS
 # =====================================================================
 
 monthly["volume_m3"] = monthly["rainfall_m"] * roof_area_m2 * capture_eff
@@ -124,7 +105,7 @@ monthly["energy_kwh"] = (
 monthly["carbon_kg"] = monthly["energy_kwh"] * carbon_intensity
 
 # =====================================================================
-# 📌 Display results
+# DISPLAY RESULTS
 # =====================================================================
 
 st.subheader("📅 Monthly Results")
@@ -132,7 +113,7 @@ st.dataframe(monthly, use_container_width=True)
 
 st.divider()
 
-st.subheader("📊 Annual Totals (Excel‑equivalent)")
+st.subheader("📊 Annual Totals")
 st.metric("Annual kWh", f"{monthly['energy_kwh'].sum():.2f}")
 st.metric("Annual Carbon Offset (kg)", f"{monthly['carbon_kg'].sum():.2f}")
 
