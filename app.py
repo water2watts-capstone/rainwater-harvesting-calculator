@@ -30,7 +30,8 @@ Based on the Water2Watts Excel model and 11‑year average Seattle precipitation
 
 **App Development:**  
 - Concept: Kyle R.  
-- Python adaptation: Paulinne A.  
+- Python adaptation: Paulinne A.
+- Calculations and research: Willa C., Peyton G., Otoniel V., Veronica R.
 - AI assistance: Microsoft Copilot + Claude Haiku  
 - All AI-generated code reviewed and adapted by Paulinne A.
 
