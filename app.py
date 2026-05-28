@@ -17,7 +17,6 @@ Rainfall values are based on **11 years of average Seattle precipitation (NOAA)*
 
 ---
 This calculator provides a **rough engineering estimate** using simplifying assumptions:  
-- Constant rainfall intensity within each month  
 - 70% capture efficiency (losses from gutters, splash, etc.)  
 - 50% turbine efficiency  
 - No friction or pipe losses 
