@@ -167,41 +167,5 @@ st.metric("Annual Carbon Offset (kg)", f"{annual_carbon:.2f}")
 
 st.divider()
 
-# =====================================================================
-# ENERGY APPLICATIONS (CORRECTED)
-# =====================================================================
-
-st.subheader("🔌 Energy Applications")
-
-# Correct device monthly energy needs
-phone_monthly_need = 0.15   # kWh/month
-led_monthly_need = 0.30     # kWh/month
-wifi_monthly_need = 7.2     # kWh/month
-
-# Phone charges
-phone_charges_per_year = annual_kwh / phone_monthly_need
-phone_charges_per_day = phone_charges_per_year / 365
-
-# LED bulb hours
-led_hours_per_year = annual_kwh / led_monthly_need
-led_hours_per_day = led_hours_per_year / 365
-
-# WiFi router runtime
-wifi_days = annual_kwh / wifi_monthly_need
-wifi_months = wifi_days / 30
-
-colA, colB, colC = st.columns(3)
-
-with colA:
-    st.metric("📱 Phone Charges / Day", f"{phone_charges_per_day:.2f}")
-    st.metric("📱 Phone Charges / Year", f"{phone_charges_per_year:.1f}")
-
-with colB:
-    st.metric("💡 LED Hours / Day", f"{led_hours_per_day:.2f}")
-    st.metric("💡 LED Hours / Year", f"{led_hours_per_year:.1f}")
-
-with colC:
-    st.metric("📶 WiFi Runtime (Days)", f"{wifi_days:.1f}")
-    st.metric("📶 WiFi Runtime (Months)", f"{wifi_months:.2f}")
 
 st.write("This calculator uses 11 years of NOAA rainfall data and Excel‑equivalent hydropower formulas.")
