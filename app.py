@@ -1,14 +1,71 @@
 import streamlit as st
 import pandas as pd
+import altair as alt
 
-st.set_page_config(page_title="Rainwater Harvesting Calculator", layout="wide")
+st.set_page_config(page_title="Water2Watts SHEW Calculator", layout="wide")
 
 # =====================================================================
 # TITLE & INTRO
 # =====================================================================
 
-st.title("🌧️ Rainwater Harvesting Calculator (Excel‑Equivalent)")
-st.write("Enter your building parameters below. Rainfall values are based on 11 years of average Seattle precipitation (NOAA).")
+st.title("💧 Water2Watts SHEW Calculator")
+
+st.markdown("""
+### 🏢 Enter Building Parameters  
+This tool estimates the potential electrical energy generated from rooftop rainwater runoff using a Small Hydroelectric Wheel (SHEW).  
+Rainfall values are based on **11 years of average Seattle precipitation (NOAA)**.
+
+---
+
+### ⚙️ How the Calculation Works  
+We use the standard hydropower equation to estimate energy from falling water:
+
+
+
+\[
+P = \eta \cdot \rho g Q H
+\]
+
+
+
+Where:  
+- **\(P\)** = power (Watts)  
+- **\(\eta\)** = turbine efficiency  
+- **\(\rho\)** = water density  
+- **\(g\)** = gravity  
+- **\(Q\)** = flow rate from roof runoff  
+- **\(H\)** = head height (vertical drop)
+
+Flow rate is computed from rainfall depth × roof area × capture efficiency.
+
+---
+
+### ⚠️ Important Notes  
+This calculator provides a **rough engineering estimate** using simplifying assumptions:  
+- Constant rainfall intensity within each month  
+- 70% capture efficiency (losses from gutters, splash, etc.)  
+- 50% turbine efficiency  
+- No friction or pipe losses  
+- No storage tank dynamics  
+- No clogging, debris, or overflow effects  
+
+Actual performance will vary depending on building geometry, plumbing, and storm patterns.
+
+---
+
+### 📋 Attribution  
+**Data & Calculations:**  
+Based on the Water2Watts Excel model and 11‑year average Seattle precipitation (NOAA).
+
+**App Development:**  
+- Concept: Kyle R.  
+- Python adaptation: Paulinne A.  
+- AI assistance: Microsoft Copilot + Claude Haiku  
+- All AI-generated code reviewed and adapted by Paulinne A.
+
+---
+
+""")
 
 st.divider()
 
@@ -63,7 +120,7 @@ else:
 st.divider()
 
 # =====================================================================
-# CONSTANTS (Excel-equivalent)
+# CONSTANTS
 # =====================================================================
 
 ft2_to_m2 = 0.09290304
@@ -104,12 +161,28 @@ monthly["energy_kwh"] = (
 
 monthly["carbon_kg"] = monthly["energy_kwh"] * carbon_intensity
 
+annual_kwh = monthly["energy_kwh"].sum()
+annual_carbon = monthly["carbon_kg"].sum()
+
 # =====================================================================
-# DISPLAY MONTHLY RESULTS
+# BAR CHARTS
 # =====================================================================
 
-st.subheader("📅 Monthly Results")
-st.dataframe(monthly, use_container_width=True)
+st.subheader("📊 Monthly Rainfall (m)")
+rain_chart = alt.Chart(monthly).mark_bar().encode(
+    x="month",
+    y="rainfall_m",
+    tooltip=["month", "rainfall_m"]
+)
+st.altair_chart(rain_chart, use_container_width=True)
+
+st.subheader("⚡ Monthly Energy Generation (kWh)")
+energy_chart = alt.Chart(monthly).mark_bar(color="#4CAF50").encode(
+    x="month",
+    y="energy_kwh",
+    tooltip=["month", "energy_kwh"]
+)
+st.altair_chart(energy_chart, use_container_width=True)
 
 st.divider()
 
@@ -117,25 +190,22 @@ st.divider()
 # ANNUAL TOTALS
 # =====================================================================
 
-annual_kwh = monthly["energy_kwh"].sum()
-annual_carbon = monthly["carbon_kg"].sum()
-
-st.subheader("📊 Annual Totals")
+st.subheader("📈 Annual Totals")
 st.metric("Annual kWh", f"{annual_kwh:.2f}")
 st.metric("Annual Carbon Offset (kg)", f"{annual_carbon:.2f}")
 
 st.divider()
 
 # =====================================================================
-# ENERGY APPLICATIONS (PHONE, LED, WIFI)
+# ENERGY APPLICATIONS (CORRECTED)
 # =====================================================================
 
 st.subheader("🔌 Energy Applications")
 
-# Device monthly energy needs (kWh)
-phone_monthly_need = 0.329
-led_monthly_need = 0.329
-wifi_monthly_need = 7.3
+# Correct device monthly energy needs
+phone_monthly_need = 0.15   # kWh/month
+led_monthly_need = 0.30     # kWh/month
+wifi_monthly_need = 7.2     # kWh/month
 
 # Phone charges
 phone_charges_per_year = annual_kwh / phone_monthly_need
@@ -152,15 +222,15 @@ wifi_months = wifi_days / 30
 colA, colB, colC = st.columns(3)
 
 with colA:
-    st.metric("📱 Phone Charges / Year", f"{phone_charges_per_year:.1f}")
     st.metric("📱 Phone Charges / Day", f"{phone_charges_per_day:.2f}")
+    st.metric("📱 Phone Charges / Year", f"{phone_charges_per_year:.1f}")
 
 with colB:
-    st.metric("💡 LED Hours / Year", f"{led_hours_per_year:.1f}")
     st.metric("💡 LED Hours / Day", f"{led_hours_per_day:.2f}")
+    st.metric("💡 LED Hours / Year", f"{led_hours_per_year:.1f}")
 
 with colC:
-    st.metric("📶 WiFi Router Runtime (Days)", f"{wifi_days:.1f}")
-    st.metric("📶 WiFi Router Runtime (Months)", f"{wifi_months:.2f}")
+    st.metric("📶 WiFi Runtime (Days)", f"{wifi_days:.1f}")
+    st.metric("📶 WiFi Runtime (Months)", f"{wifi_months:.2f}")
 
 st.write("This calculator uses 11 years of NOAA rainfall data and Excel‑equivalent hydropower formulas.")
