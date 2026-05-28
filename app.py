@@ -16,38 +16,11 @@ This tool estimates the potential electrical energy that could be harvested from
 Rainfall values are based on **11 years of average Seattle precipitation (NOAA)**.
 
 ---
-
-### ⚙️ How the Calculation Works  
-We use the standard hydropower equation to estimate energy from falling water:
-
-
-
-\[
-P = \eta \cdot \rho g Q H
-\]
-
-
-
-Where:  
-- **\(P\)** = power (Watts)  
-- **\(\eta\)** = turbine efficiency  
-- **\(\rho\)** = water density  
-- **\(g\)** = gravity  
-- **\(Q\)** = flow rate from roof runoff  
-- **\(H\)** = head height (vertical drop)
-
-Flow rate is computed from rainfall depth × roof area × capture efficiency.
-
----
-
-### ⚠️ Important Notes  
 This calculator provides a **rough engineering estimate** using simplifying assumptions:  
 - Constant rainfall intensity within each month  
 - 70% capture efficiency (losses from gutters, splash, etc.)  
 - 50% turbine efficiency  
 - No friction or pipe losses 
-
-Actual performance will vary.
 
 ---
 
