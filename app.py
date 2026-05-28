@@ -4,16 +4,16 @@ import pandas as pd
 st.set_page_config(page_title="Rainwater Harvesting Calculator", layout="wide")
 
 # =====================================================================
-# TITLE
+# TITLE & INTRO
 # =====================================================================
 
-st.title("🌧️ Rainwater Harvesting Calculator")
-st.write("Enter your building parameters below. Rainfall values are based on 11-year typical/average rainfall for Seattle precipitation (NOAA).")
+st.title("🌧️ Rainwater Harvesting Calculator (Excel‑Equivalent)")
+st.write("Enter your building parameters below. Rainfall values are based on 11 years of average Seattle precipitation (NOAA).")
 
 st.divider()
 
 # =====================================================================
-# MAIN‑BODY BUILDING INPUTS (NOT SIDEBAR)
+# MAIN‑BODY BUILDING INPUTS (WITH SLIDERS)
 # =====================================================================
 
 st.subheader("🏢 Building Parameters")
@@ -63,7 +63,7 @@ else:
 st.divider()
 
 # =====================================================================
-# CONSTANTS
+# CONSTANTS (Excel-equivalent)
 # =====================================================================
 
 ft2_to_m2 = 0.09290304
@@ -78,7 +78,7 @@ roof_area_m2 = roof_area_ft2 * ft2_to_m2
 head_m = head_ft * ft_to_m
 
 # =====================================================================
-# MONTHLY RAINFALL (HARD‑CODED)
+# MONTHLY RAINFALL (11-YEAR NOAA AVERAGE)
 # =====================================================================
 
 monthly = pd.DataFrame({
@@ -105,7 +105,7 @@ monthly["energy_kwh"] = (
 monthly["carbon_kg"] = monthly["energy_kwh"] * carbon_intensity
 
 # =====================================================================
-# DISPLAY RESULTS
+# DISPLAY MONTHLY RESULTS
 # =====================================================================
 
 st.subheader("📅 Monthly Results")
@@ -113,8 +113,54 @@ st.dataframe(monthly, use_container_width=True)
 
 st.divider()
 
-st.subheader("📊 Annual Totals")
-st.metric("Annual kWh", f"{monthly['energy_kwh'].sum():.2f}")
-st.metric("Annual Carbon Offset (kg)", f"{monthly['carbon_kg'].sum():.2f}")
+# =====================================================================
+# ANNUAL TOTALS
+# =====================================================================
 
-st.write("This version reproduces the exact Excel math using Seattle's monthly rainfall totals.")
+annual_kwh = monthly["energy_kwh"].sum()
+annual_carbon = monthly["carbon_kg"].sum()
+
+st.subheader("📊 Annual Totals")
+st.metric("Annual kWh", f"{annual_kwh:.2f}")
+st.metric("Annual Carbon Offset (kg)", f"{annual_carbon:.2f}")
+
+st.divider()
+
+# =====================================================================
+# ENERGY APPLICATIONS (PHONE, LED, WIFI)
+# =====================================================================
+
+st.subheader("🔌 Energy Applications")
+
+# Device monthly energy needs (kWh)
+phone_monthly_need = 0.329
+led_monthly_need = 0.329
+wifi_monthly_need = 7.3
+
+# Phone charges
+phone_charges_per_year = annual_kwh / phone_monthly_need
+phone_charges_per_day = phone_charges_per_year / 365
+
+# LED bulb hours
+led_hours_per_year = annual_kwh / led_monthly_need
+led_hours_per_day = led_hours_per_year / 365
+
+# WiFi router runtime
+wifi_days = annual_kwh / wifi_monthly_need
+wifi_months = wifi_days / 30
+
+colA, colB, colC = st.columns(3)
+
+with colA:
+    st.metric("📱 Phone Charges / Year", f"{phone_charges_per_year:.1f}")
+    st.metric("📱 Phone Charges / Day", f"{phone_charges_per_day:.2f}")
+
+with colB:
+    st.metric("💡 LED Hours / Year", f"{led_hours_per_year:.1f}")
+    st.metric("💡 LED Hours / Day", f"{led_hours_per_day:.2f}")
+
+with colC:
+    st.metric("📶 WiFi Router Runtime (Days)", f"{wifi_days:.1f}")
+    st.metric("📶 WiFi Router Runtime (Months)", f"{wifi_months:.2f}")
+
+st.write("This calculator uses 11 years of NOAA rainfall data and Excel‑equivalent hydropower formulas.")
