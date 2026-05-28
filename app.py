@@ -12,7 +12,7 @@ st.title("💧 Water2Watts SHEW Calculator")
 
 st.markdown("""
 ### 🏢 Enter Building Parameters  
-This tool estimates the potential electrical energy generated from rooftop rainwater runoff using a Small Hydroelectric Wheel (SHEW).  
+This tool estimates the potential electrical energy that could be harvested from rooftop rainwater runoff with a Self-sufficient Harvester of Electricity-Water (SHEW) system.  
 Rainfall values are based on **11 years of average Seattle precipitation (NOAA)**.
 
 ---
@@ -45,11 +45,9 @@ This calculator provides a **rough engineering estimate** using simplifying assu
 - Constant rainfall intensity within each month  
 - 70% capture efficiency (losses from gutters, splash, etc.)  
 - 50% turbine efficiency  
-- No friction or pipe losses  
-- No storage tank dynamics  
-- No clogging, debris, or overflow effects  
+- No friction or pipe losses 
 
-Actual performance will vary depending on building geometry, plumbing, and storm patterns.
+Actual performance will vary.
 
 ---
 
